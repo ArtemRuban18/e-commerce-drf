@@ -1,7 +1,7 @@
-from django.shortcuts import render
 from rest_framework import generics
 from .models import Category, Product, PhotoProduct
 from .serializers import CategorySerializer, ProductSerializer, PhotoProductSerializer
+from .services import ProductService
 
 class CategoryListView(generics.ListCreateAPIView):
     queryset = Category.objects.all()
@@ -21,7 +21,7 @@ class ProductListView(generics.ListCreateAPIView):
         queryset = super().get_queryset()
         category = self.request.query_params.get('category')
         if category:
-            queryset = queryset.filter(category__slug = category)
+            queryset = ProductService.get_products_by_category(category)
         return queryset
 class ProductDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Product.objects.all()
