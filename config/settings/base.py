@@ -13,12 +13,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'apps.auth.apps.AuthConfig'
-    'apps.orders.apps.OrdersConfig'
-    'apps.payment.apps.PaymentConfig'
-    'apps.products.apps.ProductsConfig'
-    'apps.profiles.apps.ProfilesConfig'
-    'apps.shopping.apps.ShoppingConfig'
+    'apps.accounts.apps.AccountsConfig',
+    'apps.orders.apps.OrdersConfig',
+    'apps.payment.apps.PaymentConfig',
+    'apps.products.apps.ProductsConfig',
+    'apps.profiles.apps.ProfilesConfig',
+    'apps.shopping.apps.ShoppingConfig',
 ]
 
 MIDDLEWARE = [
