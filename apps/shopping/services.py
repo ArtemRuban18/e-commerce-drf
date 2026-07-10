@@ -1,5 +1,6 @@
 from apps.products.models import Product
 from decimal import Decimal
+from rest_framework.exceptions import ValidationError
 
 class ShoppingService:
     def __init__(self, request, key):
@@ -20,9 +21,6 @@ class ShoppingService:
     def clear(self):
         self.items = {}
         self.save()
-    
-    def get_items(self):
-        return self.items
     
     def __len__(self):
         return sum(self.items.values())
@@ -46,7 +44,7 @@ class CartService(ShoppingService):
         product_id = str(product_id)
 
         if product_id not in self.items:
-            raise ValueError("Product is not in cart")
+            raise ValidationError("Product isn't in cart")
     
         self.items[product_id] = quantity
 
