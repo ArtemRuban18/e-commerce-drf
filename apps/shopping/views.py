@@ -31,7 +31,7 @@ class CartAPIView(APIView):
             "total_quantity": len(cart)
         }
 
-        serializer = CartResponceSerializer(data)
+        serializer = CartResponceSerializer(instance=data)
         return Response(serializer.data)
 
 
@@ -49,14 +49,14 @@ class CartAPIView(APIView):
     
     def patch(self, request):
         cart = CartService(request)
-        serializer = CartAddSerializer(data = request.data)
+        serializer = CartUpdateSerializer(data = request.data)
         if serializer.is_valid(raise_exception=True):
             cart.update(
                 product_id=serializer.validated_data["product_id"],
                 quantity=serializer.validated_data["quantity"]
             )
         return Response({
-            "message":"Product add to cart"
+            "message":"Update quantity product in cart"
         })
 
     def delete(self, request):
