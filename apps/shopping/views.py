@@ -1,10 +1,15 @@
-from .services import CartService
+from .services import CartService, WishlistService
 from .serializers import (
     CartResponceSerializer,
     CartAddSerializer,
     CartUpdateSerializer,
-    CartDeteteSerializer
+    CartDeteteSerializer,
+    WishlistResponceSerializer,
+    WishlistAddSerializer,
+    WishlistDeteteSerializer
 )
+
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from apps.products.models import Product
@@ -66,3 +71,40 @@ class CartAPIView(APIView):
             cart.remove(product_id = serializer.validated_data['product_id'])
         
         return Response({"message":"Product deleted from cart"})
+
+
+class WishlistAPIView(APIView):
+    def get(self, request):
+        wishlist = WishlistService(request)
+        items = []
+        products = Product.objects.filter(id__in = wishlist.items.keys())
+
+        for product in products:
+            items.append({
+                "id": product.id,
+                "name": product.name,
+                "price": product.price
+            })
+        
+        data = {
+            "items": items,
+            "total_quantity": len(wishlist)
+        }
+        serializer = WishlistResponceSerializer(instance = data)
+        return Response(serializer.data)
+
+
+    def post(self, request):
+        wishlist = WishlistService(request)
+        serializer = WishlistAddSerializer(data = request.data)
+        if serializer.is_valid(raise_exception=True):
+            wishlist.add(product_id = serializer.validated_data['product_id'])
+        
+        return Response({"message": "Product added to wishlist"})
+
+    def delete(self, request):
+        wishlist = WishlistService(request)
+        serializer = WishlistDeteteSerializer(data = request.data)
+        if serializer.is_valid(raise_exception=True):
+            wishlist.remove(product_id = serializer.validated_data['product_id'])
+        return Response({"message": "Product deleted from wishlist"})

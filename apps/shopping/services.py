@@ -62,3 +62,17 @@ class CartService(ShoppingService):
             total += product.price * quantity
         
         return total
+    
+class WishlistService(ShoppingService):
+    def __init__(self, request):
+        super().__init__(request, "wishlist")
+    
+    def add(self, product_id):
+        product_id = str(product_id)
+
+        if product_id in self.items:
+            self.remove(product_id)
+        else:
+            self.items[product_id] = 1
+            
+        self.save()
