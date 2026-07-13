@@ -75,4 +75,4 @@ class WishlistService(ShoppingService):
         else:
             self.items[product_id] = 1
             
-        self.save()
+            self.save()
