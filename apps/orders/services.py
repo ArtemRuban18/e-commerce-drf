@@ -38,10 +38,10 @@ class OrderService:
             product.quantity -= quantity
             product.save()
 
-            OrderItem.objects.bulk_create(order_items)
-            cart.clear()
+        OrderItem.objects.bulk_create(order_items)
+        cart.clear()
 
-            return order
+        return order
 
     @staticmethod
     @transaction.atomic
