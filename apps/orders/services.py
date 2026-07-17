@@ -2,6 +2,7 @@ from apps.products.models import Product
 from .models import Order, OrderItem
 from django.db import transaction
 from rest_framework.exceptions import ValidationError
+from apps.shopping.selectors import get_cart_products
 
 class OrderService:
     @staticmethod

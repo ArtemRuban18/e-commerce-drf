@@ -9,64 +9,62 @@ from .serializers import (
     WishlistDeteteSerializer
 )
 
-
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from apps.products.models import Product
+from .selectors import get_cart_products, get_wishlist_products
+from .services import ShoppingService
+
+
 class CartAPIView(APIView):
+    def get_cart(self, request):
+        shopping = ShoppingService(
+            request.session,
+            "cart"
+        )
+        return CartService(shopping)
+
     def get(self, request):
-        cart  = CartService(request)
+        cart  = self.get_cart(request)
 
-        items = []
-        products = Product.objects.filter(id__in = cart.items.keys())
-        for product in products:
-            quantity = cart.items[str(product.id)]
+        data = get_cart_products(cart.get_items())
 
-            items.append({
-                "id": product.id,
-                "name": product.name,
-                "price": product.price,
-                "quantity": quantity,
-                "total_price": product.price * quantity
-            })
-        
-        data = {
-            "items": items,
-            "total_price": cart.get_total_price(),
-            "total_quantity": len(cart)
-        }
+        serializer = CartResponceSerializer(data)
 
-        serializer = CartResponceSerializer(instance=data)
         return Response(serializer.data)
 
 
     def post(self, request):
-        cart = CartService(request)
+        cart  = self.get_cart(request)
         serializer = CartAddSerializer(data = request.data)
+
         if serializer.is_valid(raise_exception=True):
             cart.add(
                 product_id=serializer.validated_data["product_id"],
                 quantity=serializer.validated_data["quantity"]
             )
+
         return Response({
             "message":"Product add to cart"
         })
     
     def patch(self, request):
-        cart = CartService(request)
+        cart  = self.get_cart(request)
         serializer = CartUpdateSerializer(data = request.data)
+
         if serializer.is_valid(raise_exception=True):
             cart.update(
                 product_id=serializer.validated_data["product_id"],
                 quantity=serializer.validated_data["quantity"]
             )
+
         return Response({
             "message":"Update quantity product in cart"
         })
 
     def delete(self, request):
-        cart = CartService(request)
+        cart  = self.get_cart(request)
         serializer = CartDeteteSerializer(data = request.data)
+        
         if serializer.is_valid(raise_exception=True):
             cart.remove(product_id = serializer.validated_data['product_id'])
         
@@ -74,37 +72,39 @@ class CartAPIView(APIView):
 
 
 class WishlistAPIView(APIView):
-    def get(self, request):
-        wishlist = WishlistService(request)
-        items = []
-        products = Product.objects.filter(id__in = wishlist.items.keys())
 
-        for product in products:
-            items.append({
-                "id": product.id,
-                "name": product.name,
-                "price": product.price
-            })
-        
-        data = {
-            "items": items,
-            "total_quantity": len(wishlist)
-        }
-        serializer = WishlistResponceSerializer(instance = data)
+    def get_wishlist(self, request):
+        shopping = ShoppingService(
+            request.session,
+            "wishlist"
+        )
+        return WishlistService(shopping)
+
+
+    def get(self, request):
+        wishlist = self.get_wishlist(request)
+
+        data = get_wishlist_products(wishlist.get_items())
+
+        serializer = WishlistResponceSerializer(data)
+
         return Response(serializer.data)
 
 
     def post(self, request):
-        wishlist = WishlistService(request)
+        wishlist = self.get_wishlist(request)
         serializer = WishlistAddSerializer(data = request.data)
+
         if serializer.is_valid(raise_exception=True):
             wishlist.add(product_id = serializer.validated_data['product_id'])
         
         return Response({"message": "Product added to wishlist"})
 
     def delete(self, request):
-        wishlist = WishlistService(request)
+        wishlist = self.get_wishlist(request)
         serializer = WishlistDeteteSerializer(data = request.data)
+
         if serializer.is_valid(raise_exception=True):
             wishlist.remove(product_id = serializer.validated_data['product_id'])
+
         return Response({"message": "Product deleted from wishlist"})

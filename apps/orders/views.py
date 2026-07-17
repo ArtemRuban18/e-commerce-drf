@@ -1,6 +1,6 @@
 from .serializers import OrderCreateSerializer, OrderResponseSerializer
 from .services import OrderService
-from apps.shopping.services import CartService
+from apps.shopping.services import ShoppingService, CartService
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -43,7 +43,12 @@ class OrderListCreateAPIView(APIView):
         )
 
         serializer.is_valid(raise_exception=True)
-        cart = CartService(request)
+        shopping = ShoppingService(
+            request.session,
+            "cart"
+        )
+
+        cart = CartService(shopping)
 
         order = OrderService.create_order(
             user = request.user,
