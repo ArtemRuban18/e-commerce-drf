@@ -1,5 +1,4 @@
 from apps.products.models import Product
-from decimal import Decimal
 from rest_framework.exceptions import ValidationError
 
 class ShoppingService:
@@ -24,6 +23,8 @@ class CartService:
         self.items = shopping.get()
     
     def add(self, product_id: int, quantity: int = 1) -> None:
+        if not Product.objects.filter(id=product_id).exists():
+            raise ValidationError("Product doesn't exists")
         product_id = str(product_id)
 
         self.items[product_id] = (self.items.get(product_id, 0) + quantity)
@@ -31,6 +32,8 @@ class CartService:
         self.shopping.save(self.items)
 
     def update(self, product_id: int, quantity: int) -> None:
+        if not Product.objects.filter(id=product_id).exists():
+            raise ValidationError("Product doesn't exists")
         product_id = str(product_id)
 
         if product_id not in self.items:
@@ -56,6 +59,8 @@ class WishlistService:
         self.items = shopping.get()
     
     def add(self, product_id: int):
+        if not Product.objects.filter(id=product_id).exists():
+            raise ValidationError("Product doesn't exists")
         product_id = str(product_id)
 
         self.items[product_id] = 1

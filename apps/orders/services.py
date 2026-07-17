@@ -2,43 +2,41 @@ from apps.products.models import Product
 from .models import Order, OrderItem
 from django.db import transaction
 from rest_framework.exceptions import ValidationError
-from apps.shopping.selectors import get_cart_products
 
 class OrderService:
     @staticmethod
+    @transaction.atomic
     def create_order(user, cart, data: dict[str, int]) -> Order:
         cart_items = cart.get_items()
 
         if not cart_items:
             raise ValidationError("Cart is empty")
+        
+        products = Product.objects.select_for_update().filter(id__in=cart_items.keys())
 
-        with transaction.atomic():
-            products = Product.objects.select_for_update().filter(id__in=cart_items.keys())
+        order = Order.objects.create(
+            user = user,
+            **data
+        )
 
-            order = Order.objects.create(
-                user = user,
-                **data
+        order_items = []
+        for product in products:
+            quantity = cart_items[str(product.id)]
+
+            if product.quantity < quantity:
+                raise ValidationError(f"Not enough {product.name}")
+
+            order_items.append(
+                OrderItem(
+                    order = order,
+                    product = product,
+                    price = product.price,
+                    quantity = quantity
+                )
             )
 
-            #items list to add to the order
-            order_items = []
-            for product in products:
-                quantity = cart_items[str(product.id)]
-
-                if product.quantity < quantity:
-                    raise ValidationError(f"Not enough {product.name}")
-
-                order_items.append(
-                    OrderItem(
-                        order = order,
-                        product = product,
-                        price = product.price,
-                        quantity = quantity
-                    )
-                )
-
-                product.quantity -= quantity
-                product.save()
+            product.quantity -= quantity
+            product.save()
 
             OrderItem.objects.bulk_create(order_items)
             cart.clear()
