@@ -3,7 +3,7 @@ from rest_framework import serializers
 
 class CartAddSerializer(serializers.Serializer):
     product_id = serializers.IntegerField()
-    quantity = serializers.IntegerField(min_value = 1, required = False)
+    quantity = serializers.IntegerField(min_value = 1, default = 1)
 
 class CartUpdateSerializer(serializers.Serializer):
     product_id = serializers.IntegerField()
