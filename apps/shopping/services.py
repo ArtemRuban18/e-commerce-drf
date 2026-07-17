@@ -22,6 +22,9 @@ class ShoppingService:
         self.items = {}
         self.save()
     
+    def get_items(self):
+        return self.items
+    
     def __len__(self):
         return sum(self.items.values())
 
