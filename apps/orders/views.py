@@ -3,6 +3,7 @@ from .services import OrderService
 from apps.shopping.services import ShoppingService, CartService
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.request import Request
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from .selectors import get_user_order, get_user_orders
@@ -10,7 +11,7 @@ from .selectors import get_user_order, get_user_orders
 class OrderDetailAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self, request, id):
+    def get(self, request: Request, id: int) -> Response:
         order = get_user_order(
             user=request.user,
             order_id=id
@@ -29,14 +30,14 @@ class OrderDetailAPIView(APIView):
 class OrderListCreateAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self, request):
+    def get(self, request: Request) -> Response:
         orders = get_user_orders(user = request.user)
 
         serializer = OrderResponseSerializer(orders, many = True)
 
         return Response(serializer.data)
 
-    def post(self, request):
+    def post(self, request:Request) -> Response:
 
         serializer = OrderCreateSerializer(
             data = request.data
@@ -64,7 +65,7 @@ class OrderListCreateAPIView(APIView):
 class OrderCancelAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def post(self, request, id):
+    def post(self, request:Request, id: int) -> Response:
         order = get_user_order(
             user = request.user,
             order_id = id

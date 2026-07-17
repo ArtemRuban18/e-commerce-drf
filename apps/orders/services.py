@@ -6,7 +6,7 @@ from apps.shopping.selectors import get_cart_products
 
 class OrderService:
     @staticmethod
-    def create_order(user, cart, data):
+    def create_order(user, cart, data: dict[str, int]) -> Order:
         cart_items = cart.get_items()
 
         if not cart_items:
@@ -47,7 +47,7 @@ class OrderService:
 
     @staticmethod
     @transaction.atomic
-    def cancel_order(order):
+    def cancel_order(order: Order) -> Order:
         if order.status in [
             Order.Status.CANCELED,
             Order.Status.COMPLETED
