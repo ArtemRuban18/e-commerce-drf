@@ -25,3 +25,8 @@ class SignUpSerializer(serializers.ModelSerializer):
             **validated_data
         )
         return user
+
+class LoginSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    password = serializers.CharField(write_only = True)
+    
