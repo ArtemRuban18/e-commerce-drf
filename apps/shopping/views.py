@@ -11,12 +11,16 @@ from .serializers import (
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.request import Request
 from .selectors import get_cart_products, get_wishlist_products
 from .services import ShoppingService
+from rest_framework.permissions import IsAuthenticated
 
 
 class CartAPIView(APIView):
-    def get_cart(self, request):
+    permission_classes = [IsAuthenticated]
+
+    def get_cart(self, request: Request) -> Response:
         shopping = ShoppingService(
             request.session,
             "cart"
@@ -33,7 +37,7 @@ class CartAPIView(APIView):
         return Response(serializer.data)
 
 
-    def post(self, request):
+    def post(self, request: Request) -> Response:
         cart  = self.get_cart(request)
         serializer = CartAddSerializer(data = request.data)
 
@@ -47,7 +51,7 @@ class CartAPIView(APIView):
             "message":"Product add to cart"
         })
     
-    def patch(self, request):
+    def patch(self, request: Request) -> Response:
         cart  = self.get_cart(request)
         serializer = CartUpdateSerializer(data = request.data)
 
@@ -61,7 +65,7 @@ class CartAPIView(APIView):
             "message":"Update quantity product in cart"
         })
 
-    def delete(self, request):
+    def delete(self, request: Request) -> Response:
         cart  = self.get_cart(request)
         serializer = CartDeteteSerializer(data = request.data)
         
@@ -72,8 +76,9 @@ class CartAPIView(APIView):
 
 
 class WishlistAPIView(APIView):
+    permission_classes = [IsAuthenticated]
 
-    def get_wishlist(self, request):
+    def get_wishlist(self, request: Request) -> Response:
         shopping = ShoppingService(
             request.session,
             "wishlist"
@@ -81,7 +86,7 @@ class WishlistAPIView(APIView):
         return WishlistService(shopping)
 
 
-    def get(self, request):
+    def get(self, request: Request) -> Response:
         wishlist = self.get_wishlist(request)
 
         data = get_wishlist_products(wishlist.get_items())
@@ -91,7 +96,7 @@ class WishlistAPIView(APIView):
         return Response(serializer.data)
 
 
-    def post(self, request):
+    def post(self, request: Request) -> Response:
         wishlist = self.get_wishlist(request)
         serializer = WishlistAddSerializer(data = request.data)
 
@@ -100,7 +105,7 @@ class WishlistAPIView(APIView):
         
         return Response({"message": "Product added to wishlist"})
 
-    def delete(self, request):
+    def delete(self, request: Request) -> Response:
         wishlist = self.get_wishlist(request)
         serializer = WishlistDeteteSerializer(data = request.data)
 

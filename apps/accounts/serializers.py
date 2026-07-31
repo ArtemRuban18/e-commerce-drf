@@ -18,6 +18,10 @@ class SignUpSerializer(serializers.ModelSerializer):
         validate_password(attrs['password'])
         return attrs
 
+    def validate_email(self, value):
+        if User.objects.filter(email = value).exists():
+            raise serializers.ValidationError("User with this email elready exists")
+
     def create(self, validated_data):
         validated_data.pop('password2')
 

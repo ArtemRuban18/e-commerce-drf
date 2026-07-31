@@ -1,4 +1,5 @@
 from rest_framework.response import Response
+from rest_framework.request import Request
 from .serializers import SignUpSerializer, LoginSerializer
 from rest_framework.views import APIView
 from rest_framework import status
@@ -6,7 +7,7 @@ from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 
 class SignUpAPIView(APIView):
-    def post(self, request):
+    def post(self, request: Request) -> Response:
         serializer = SignUpSerializer(data = request.data)
 
         if serializer.is_valid(raise_exception=True):
@@ -26,7 +27,7 @@ class SignUpAPIView(APIView):
         )
 
 class LoginAPiView(APIView):
-    def post(self, request):
+    def post(self, request: Request) -> Response:
         serializer = LoginSerializer(data = request.data)
 
         serializer.is_valid(raise_exception=True)
