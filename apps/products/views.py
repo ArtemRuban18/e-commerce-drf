@@ -2,6 +2,7 @@ from rest_framework import generics
 from .models import Category, Product, PhotoProduct
 from .serializers import CategorySerializer, ProductSerializer, PhotoProductSerializer
 from .services import ProductService
+from config.pagination import StandartSetPagination
 
 class CategoryListView(generics.ListCreateAPIView):
     queryset = Category.objects.all()
@@ -15,6 +16,7 @@ class CategoryDetailView(generics.RetrieveUpdateDestroyAPIView):
 class ProductListView(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class  = ProductSerializer
+    pagination_class = StandartSetPagination
     lookup_field = 'slug'
 
     def get_queryset(self):

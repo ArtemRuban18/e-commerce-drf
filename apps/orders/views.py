@@ -7,6 +7,7 @@ from rest_framework.request import Request
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from .selectors import get_user_order, get_user_orders
+from config.pagination import StandartSetPagination
 
 class OrderDetailAPIView(APIView):
     permission_classes = [IsAuthenticated]
@@ -29,6 +30,7 @@ class OrderDetailAPIView(APIView):
 
 class OrderListCreateAPIView(APIView):
     permission_classes = [IsAuthenticated]
+    pagination_class = StandartSetPagination
 
     def get(self, request: Request) -> Response:
         orders = get_user_orders(user = request.user)
