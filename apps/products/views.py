@@ -3,6 +3,7 @@ from .models import Category, Product, PhotoProduct
 from .serializers import CategorySerializer, ProductSerializer, PhotoProductSerializer
 from .services import ProductService
 from config.pagination import StandartSetPagination
+from django.views.decorators.cache import cache_page
 
 class CategoryListView(generics.ListCreateAPIView):
     queryset = Category.objects.all()
@@ -19,6 +20,7 @@ class ProductListView(generics.ListCreateAPIView):
     pagination_class = StandartSetPagination
     lookup_field = 'slug'
 
+    @cache_page(60 *10, name = 'dispatch:product_list')
     def get_queryset(self):
         queryset = super().get_queryset()
         category = self.request.query_params.get('category')
