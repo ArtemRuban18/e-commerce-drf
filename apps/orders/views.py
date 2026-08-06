@@ -30,7 +30,6 @@ class OrderDetailAPIView(APIView):
 
 class OrderListCreateAPIView(APIView):
     permission_classes = [IsAuthenticated]
-    pagination_class = StandartSetPagination
 
     def get(self, request: Request) -> Response:
         orders = get_user_orders(user = request.user)
