@@ -17,7 +17,6 @@ INSTALLED_APPS = [
     'apps.orders.apps.OrdersConfig',
     'apps.payment.apps.PaymentConfig',
     'apps.products.apps.ProductsConfig',
-    'apps.profiles.apps.ProfilesConfig',
     'apps.shopping.apps.ShoppingConfig',
 ]
 

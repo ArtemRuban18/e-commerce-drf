@@ -20,7 +20,7 @@ class ProductListView(generics.ListCreateAPIView):
     pagination_class = StandartSetPagination
     lookup_field = 'slug'
 
-    @cache_page(60 *10, name = 'dispatch:product_list')
+    @cache_page(60 *10)
     def get_queryset(self):
         queryset = super().get_queryset()
         category = self.request.query_params.get('category')
