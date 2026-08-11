@@ -2,6 +2,7 @@ from apps.products.models import Product
 from .models import Order, OrderItem
 from django.db import transaction
 from rest_framework.exceptions import ValidationError
+from .tasks import order_created
 
 class OrderService:
     @staticmethod
@@ -41,6 +42,8 @@ class OrderService:
         OrderItem.objects.bulk_create(order_items)
         cart.clear()
 
+        order_created.delay(order.id)
+        
         return order
 
     @staticmethod
