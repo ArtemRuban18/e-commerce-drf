@@ -1,56 +1,37 @@
 from .serializers import OrderCreateSerializer, OrderResponseSerializer
 from .services import OrderService
 from apps.shopping.services import ShoppingService, CartService
-from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.request import Request
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from .selectors import get_user_order, get_user_orders
-from config.pagination import StandartSetPagination
+from rest_framework.viewsets import ModelViewSet
+from .models import Order
+from rest_framework.decorators import action
 
-class OrderDetailAPIView(APIView):
+class OrderViewSet(ModelViewSet):
+    serializer_class = OrderResponseSerializer
     permission_classes = [IsAuthenticated]
 
-    def get(self, request: Request, id: int) -> Response:
-        order = get_user_order(
-            user=request.user,
-            order_id=id
-        )
+    def get_queryset(self):
+        return Order.objects.filter(user = self.request.user)
 
-        if not order:
-            return Response(
-                {
-                    "error": "Order not found"
-                }
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return OrderCreateSerializer
+
+        return OrderResponseSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data = request.data)
+
+        serializer.is_valid(raise_exception = True)
+
+        cart = CartService(
+            ShoppingService(
+                session=request.session,
+                key="cart"
             )
-        
-        serializer = OrderResponseSerializer(order)
-        return Response(serializer.data)
-
-class OrderListCreateAPIView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request: Request) -> Response:
-        orders = get_user_orders(user = request.user)
-
-        serializer = OrderResponseSerializer(orders, many = True)
-
-        return Response(serializer.data)
-
-    def post(self, request:Request) -> Response:
-
-        serializer = OrderCreateSerializer(
-            data = request.data
         )
-
-        serializer.is_valid(raise_exception=True)
-        shopping = ShoppingService(
-            request.session,
-            "cart"
-        )
-
-        cart = CartService(shopping)
 
         order = OrderService.create_order(
             user = request.user,
@@ -58,29 +39,20 @@ class OrderListCreateAPIView(APIView):
             data = serializer.validated_data
         )
 
-        response = OrderResponseSerializer(order)
-        return Response(response.data, status=status.HTTP_201_CREATED)
+        response_serializer = OrderResponseSerializer(order)
 
-
-
-class OrderCancelAPIView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request:Request, id: int) -> Response:
-        order = get_user_order(
-            user = request.user,
-            order_id = id
-        )
-
-        if not order:
-            return Response(
-                {
-                    "error": "Order not found"
-                }
+        return Response(
+            response_serializer.data,
+            status=status.HTTP_201_CREATED
             )
 
-        OrderService.cancel_order(order)
+    @action(detail=True, methods=['post'])
+    def cancel_order(self, request, pk = None):
+        order = self.get_object()
+
+        order = OrderService.cancel_order(order = order)
 
         serializer = OrderResponseSerializer(order)
 
         return Response(serializer.data)
+        

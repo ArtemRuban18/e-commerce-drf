@@ -14,12 +14,9 @@ from rest_framework.response import Response
 from rest_framework.request import Request
 from .selectors import get_cart_products, get_wishlist_products
 from .services import ShoppingService
-from rest_framework.permissions import IsAuthenticated
 
 
 class CartAPIView(APIView):
-    permission_classes = [IsAuthenticated]
-
     def get_cart(self, request: Request) -> Response:
         shopping = ShoppingService(
             request.session,
@@ -76,8 +73,6 @@ class CartAPIView(APIView):
 
 
 class WishlistAPIView(APIView):
-    permission_classes = [IsAuthenticated]
-
     def get_wishlist(self, request: Request) -> Response:
         shopping = ShoppingService(
             request.session,
