@@ -20,6 +20,9 @@ class OrderViewSet(ModelViewSet):
             return OrderCreateSerializer
 
         return OrderResponseSerializer
+    
+    def perform_create(self, serializer):
+        serializer.save(user = self.request.user)
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data = request.data)
