@@ -3,7 +3,12 @@ from django.core.mail import send_mail
 from apps.orders.models import Order
 from config.settings.base import EMAIL_HOST_USER
 
-@shared_task
+@shared_task(
+        name = "send_email_order",
+        autoretry_for = (ConnectionError,),
+        max_retries = 3,
+        retry_backoff = True
+)
 def order_created(order_id):
 
     order = Order.objects.get(id = order_id)
@@ -18,3 +23,5 @@ def order_created(order_id):
     mail_sent = send_mail(
         subject, message, EMAIL_HOST_USER, [order.email]
     )
+
+    return mail_sent
