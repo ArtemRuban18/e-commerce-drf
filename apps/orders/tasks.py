@@ -20,8 +20,9 @@ def order_created(order_id):
         f'Your order ID is {order.id}'
     )
 
-    mail_sent = send_mail(
-        subject, message, EMAIL_HOST_USER, [order.email]
+    send_mail(
+        subject=subject,
+        message=message,
+        from_email=EMAIL_HOST_USER,
+        recipient_list=[order.email]
     )
-
-    return mail_sent

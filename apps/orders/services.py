@@ -42,7 +42,9 @@ class OrderService:
         OrderItem.objects.bulk_create(order_items)
         cart.clear()
 
-        order_created.delay(order.id)
+        transaction.on_commit(
+            lambda: order_created.delay(order.id)
+        )
         
         return order
 
