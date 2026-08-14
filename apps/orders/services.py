@@ -44,9 +44,10 @@ class OrderService:
 
         transaction.on_commit(
             lambda: order_created.apply_async(
-                args=[order.id],
-                queue="emails",)
-        )
+                    args=[order.id],
+                    queue="emails",
+    )
+)
         
         return order
 

@@ -94,7 +94,7 @@ CACHE = {
     }
 }
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
@@ -105,3 +105,9 @@ DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL')
 CELERY_BROKER_URL = config("CELERY_BROKER_URL")
 CELERY_RESULT_BACKEND = config("CELERY_RESULT_BACKEND")
 CELERY_RESULT_EXPIRES = 60 * 60 * 24 * 7
+
+from kombu import Queue
+
+CELERY_TASK_QUEUES = (
+    Queue("emails"),
+)
