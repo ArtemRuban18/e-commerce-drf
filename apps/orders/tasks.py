@@ -1,6 +1,7 @@
 from celery import shared_task
 from django.core.mail import send_mail
 from apps.orders.models import Order
+from django.core.exceptions import ObjectDoesNotExist
 from config.settings.base import EMAIL_HOST_USER
 
 @shared_task(
@@ -9,9 +10,12 @@ from config.settings.base import EMAIL_HOST_USER
         max_retries = 3,
         retry_backoff = True
 )
-def order_created(order_id):
+def order_created(order_id: int):
 
-    order = Order.objects.get(id = order_id)
+    try:
+        order = Order.objects.get(id = order_id)
+    except ObjectDoesNotExist:
+        return None
 
     subject = f"Order successfully accepted!"
     message = (

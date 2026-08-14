@@ -43,7 +43,9 @@ class OrderService:
         cart.clear()
 
         transaction.on_commit(
-            lambda: order_created.delay(order.id)
+            lambda: order_created.apply_async(
+                args=[order.id],
+                queue="emails",)
         )
         
         return order
