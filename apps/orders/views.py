@@ -10,6 +10,7 @@ from rest_framework.decorators import action
 
 class OrderViewSet(ModelViewSet):
     serializer_class = OrderResponseSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return Order.objects.filter(user = self.request.user)
