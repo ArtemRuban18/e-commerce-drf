@@ -5,6 +5,9 @@ from .services import ProductService
 from config.pagination import StandartSetPagination
 from django.views.decorators.cache import cache_page
 from rest_framework.permissions import AllowAny
+from django.utils.decorators import method_decorator
+from .filters import ProductFilter
+from django_filters import rest_framework as filters
 
 class CategoryListView(generics.ListCreateAPIView):
     queryset = Category.objects.all()
@@ -17,6 +20,7 @@ class CategoryDetailView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [AllowAny]
     lookup_field = 'slug'
 
+@method_decorator(cache_page(60 * 10), name='dispatch')
 class ProductListView(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class  = ProductSerializer
@@ -24,13 +28,16 @@ class ProductListView(generics.ListCreateAPIView):
     permission_classes = [AllowAny]
     lookup_field = 'slug'
 
-    @cache_page(60 *10)
+    filter_backends = (filters.DjangoFilterBackend,)
+    filterset_class = ProductFilter 
+
     def get_queryset(self):
         queryset = super().get_queryset()
         category = self.request.query_params.get('category')
         if category:
             queryset = ProductService.get_products_by_category(category)
         return queryset
+    
 class ProductDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
