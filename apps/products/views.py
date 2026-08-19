@@ -8,6 +8,7 @@ from rest_framework.permissions import AllowAny
 from django.utils.decorators import method_decorator
 from .filters import ProductFilter
 from django_filters import rest_framework as filters
+from rest_framework.filters import SearchFilter, OrderingFilter
 
 class CategoryListView(generics.ListCreateAPIView):
     queryset = Category.objects.all()
@@ -28,8 +29,23 @@ class ProductListView(generics.ListCreateAPIView):
     permission_classes = [AllowAny]
     lookup_field = 'slug'
 
-    filter_backends = (filters.DjangoFilterBackend,)
+    filter_backends = [
+        filters.DjangoFilterBackend,
+        SearchFilter,
+        OrderingFilter
+    ]
     filterset_class = ProductFilter 
+
+    search_fields = [
+        'name',
+        'description',
+        'category__name'
+    ]
+
+    ordering_fields = [
+        'price',
+        'name',
+    ]
 
     def get_queryset(self):
         queryset = super().get_queryset()
