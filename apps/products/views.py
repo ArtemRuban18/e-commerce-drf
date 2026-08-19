@@ -4,20 +4,24 @@ from .serializers import CategorySerializer, ProductSerializer, PhotoProductSeri
 from .services import ProductService
 from config.pagination import StandartSetPagination
 from django.views.decorators.cache import cache_page
+from rest_framework.permissions import AllowAny
 
 class CategoryListView(generics.ListCreateAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+    permission_classes = [AllowAny]
 
 class CategoryDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+    permission_classes = [AllowAny]
     lookup_field = 'slug'
 
 class ProductListView(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class  = ProductSerializer
     pagination_class = StandartSetPagination
+    permission_classes = [AllowAny]
     lookup_field = 'slug'
 
     @cache_page(60 *10)
@@ -35,6 +39,7 @@ class ProductDetailView(generics.RetrieveUpdateDestroyAPIView):
 class PhotoProductListView(generics.ListCreateAPIView):
     queryset = PhotoProduct.objects.all()
     serializer_class = PhotoProductSerializer
+    permission_classes = [AllowAny]
 
     def get_queryset(self):
         queryset = super().get_queryset()
