@@ -7,13 +7,9 @@ from django.db.models import Sum, F
 
 class Order(models.Model):
     class Status(models.TextChoices):
-        NEW = 'new',  'NEW'
-        PROCESSING = 'processing', 'PROCESSING'
-        APPROVED = 'approved', 'APPROVED'
-        SHIPPED = 'shipped', 'SHIPPED'
-        DELIVERED = 'delivered', 'DELIVERED'
-        COMPLETED = 'completed', 'COMPLETED'
-        CANCELED = 'canceled', 'CANCELED'
+        PENDING = "pending"
+        PAID = "paid"
+        CANCELLED = "cancelled"
     
     class PaymentMethod(models.TextChoices):
         ONLINE = 'online', 'ONLINE'
@@ -27,7 +23,7 @@ class Order(models.Model):
     address = models.CharField(max_length=50)
     postal_code = models.CharField(max_length=20, blank = False)
     city = models.CharField(max_length=50, blank = False)
-    status = models.CharField(max_length=20, choices = Status.choices, default = Status.NEW)
+    status = models.CharField(max_length=20, choices = Status.choices, default = Status.PENDING)
     payment_method = models.CharField(max_length=10, choices=PaymentMethod.choices, default=PaymentMethod.ONLINE)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)

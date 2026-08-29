@@ -34,7 +34,7 @@ MIDDLEWARE = [
 ]
 
 REST_FRAMEWORK = {
-    'DEFAULT_PAGINATION_CLASS' : ('config.pagination.StandartSetPagination',),
+    'DEFAULT_PAGINATION_CLASS': 'config.pagination.StandartSetPagination',
     'DEFAULT_AUTHENTICATION_CLASSES' :(
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
@@ -125,3 +125,7 @@ from kombu import Queue
 CELERY_TASK_QUEUES = (
     Queue("emails"),
 )
+
+STRIPE_PUBLISHABLE_KEY=config("STRIPE_PUBLISHABLE_KEY")
+STRIPE_SECRET_KEY=config("STRIPE_SECRET_KEY")
+STRIPE_WEBHOOK_SECRET=config("STRIPE_WEBHOOK_SECRET")
