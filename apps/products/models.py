@@ -17,10 +17,10 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
-    def save(self):
+    def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)
-        return super().save()
+        return super().save(*args, **kwargs)
 
 class InStockProductManager(models.Manager):
     def get_queryset(self):
@@ -52,14 +52,14 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
-    def save(self):
+    def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify.slugify(self.name)
+            self.slug = slugify(self.name)
         if self.quantity == 0:
             self.status = Product.Status.OUT_OF_STOCK
         else:
             self.status = Product.Status.IN_STOCK
-        return super().save()
+        return super().save(*args, **kwargs)
 
 class PhotoProduct(models.Model):
     product = models.ForeignKey(Product, on_delete = models.CASCADE, related_name = 'photos')

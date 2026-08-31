@@ -31,7 +31,6 @@ class ProductListView(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class  = ProductSerializer
     pagination_class = StandartSetPagination
-    permission_classes = [IsAdminUser]
     lookup_field = 'slug'
 
     filter_backends = [
@@ -52,12 +51,19 @@ class ProductListView(generics.ListCreateAPIView):
         'name',
     ]
 
+    def get_permissions(self):
+        self.permission_classes = [AllowAny]
+        if self.request.method == 'POST':
+            self.permission_classes == [IsAdminUser]
+        return super().get_permissions()
+
     def get_queryset(self):
         queryset = super().get_queryset()
         category = self.request.query_params.get('category')
         if category:
             queryset = ProductService.get_products_by_category(category)
         return queryset
+
     
 class ProductDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Product.objects.all()
