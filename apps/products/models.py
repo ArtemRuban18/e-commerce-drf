@@ -19,7 +19,7 @@ class Category(models.Model):
 
     def save(self):
         if not self.slug:
-            self.slug = slugify.slugify(self.name)
+            self.slug = slugify(self.name)
         return super().save()
 
 class InStockProductManager(models.Manager):
