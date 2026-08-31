@@ -4,7 +4,7 @@ from .serializers import CategorySerializer, ProductSerializer, PhotoProductSeri
 from .services import ProductService
 from config.pagination import StandartSetPagination
 from django.views.decorators.cache import cache_page
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAdminUser
 from django.utils.decorators import method_decorator
 from .filters import ProductFilter
 from django_filters import rest_framework as filters
@@ -13,12 +13,17 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 class CategoryListView(generics.ListCreateAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    permission_classes = [AllowAny]
+
+    def get_permissions(self):
+        self.permission_classes = [AllowAny]
+        if self.request.method == 'POST':
+            self.permission_classes == [IsAdminUser]
+        return super().get_permissions()
 
 class CategoryDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAdminUser]
     lookup_field = 'slug'
 
 @method_decorator(cache_page(60 * 10), name='dispatch')
@@ -26,7 +31,7 @@ class ProductListView(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class  = ProductSerializer
     pagination_class = StandartSetPagination
-    permission_classes = [AllowAny]
+    permission_classes = [IsAdminUser]
     lookup_field = 'slug'
 
     filter_backends = [
