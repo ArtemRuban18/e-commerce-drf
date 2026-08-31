@@ -1,12 +1,14 @@
 from apps.products.models import Product
 from decimal import Decimal
+from typing import Dict, List
 
-def get_cart_products(cart_items: dict[str, int]) -> dict[str, int]:
+
+def get_cart_products(cart_items: Dict[str, int]) -> Dict:
     products = Product.objects.filter(id__in=cart_items.keys())
 
-    items = []
+    items: List[Dict] = []
 
-    total = Decimal("0")
+    total: Decimal = Decimal("0")
 
     for product in products:
         quantity = cart_items[str(product.id)]
@@ -29,16 +31,17 @@ def get_cart_products(cart_items: dict[str, int]) -> dict[str, int]:
         "total_quantity": sum(cart_items.values())
     }
 
-def get_wishlist_products(wishlist_items:dict[str, int]) -> dict[str, int]:
+
+def get_wishlist_products(wishlist_items: Dict[str, int]) -> Dict:
     products = Product.objects.filter(id__in=wishlist_items.keys())
 
-    items = []
+    items: List[Dict] = []
 
     for product in products:
         items.append(
             {
             "name": product.name,
-            "price":product.price
+            "price": product.price
             }
         )
     

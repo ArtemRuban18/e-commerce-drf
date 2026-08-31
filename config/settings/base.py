@@ -98,6 +98,12 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
+# Stripe Configuration
+STRIPE_SECRET_KEY = config("STRIPE_SECRET_KEY")
+STRIPE_WEBHOOK_SECRET = config("STRIPE_WEBHOOK_SECRET")
+STRIPE_SUCCESS_URL = config("STRIPE_SUCCESS_URL", default="http://localhost:3000/payment/success")
+STRIPE_CANCEL_URL = config("STRIPE_CANCEL_URL", default="http://localhost:3000/payment/cancel")
+
 DATABASES = {}
 
 CACHE = {

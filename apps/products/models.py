@@ -1,5 +1,5 @@
 from django.db import models
-import slugify
+from slugify import slugify
 
 class Category(models.Model):
     name = models.CharField(max_length = 255, null = False, blank = False)

@@ -1,12 +1,12 @@
 from .services import CartService, WishlistService
 from .serializers import (
-    CartResponceSerializer,
+    CartResponseSerializer,
     CartAddSerializer,
     CartUpdateSerializer,
-    CartDeteteSerializer,
-    WishlistResponceSerializer,
+    CartDeleteSerializer,
+    WishlistResponseSerializer,
     WishlistAddSerializer,
-    WishlistDeteteSerializer
+    WishlistDeleteSerializer
 )
 
 from rest_framework.views import APIView
@@ -33,7 +33,7 @@ class CartAPIView(APIView):
 
         data = get_cart_products(cart.get_items())
 
-        serializer = CartResponceSerializer(data)
+        serializer = CartResponseSerializer(data)
 
         return Response(serializer.data)
 
@@ -68,7 +68,7 @@ class CartAPIView(APIView):
 
     def delete(self, request: Request) -> Response:
         cart  = self.get_cart(request)
-        serializer = CartDeteteSerializer(data = request.data)
+        serializer = CartDeleteSerializer(data = request.data)
         
         if serializer.is_valid(raise_exception=True):
             cart.remove(product_id = serializer.validated_data['product_id'])
@@ -90,7 +90,7 @@ class WishlistAPIView(APIView):
 
         data = get_wishlist_products(wishlist.get_items())
 
-        serializer = WishlistResponceSerializer(data)
+        serializer = WishlistResponseSerializer(data)
 
         return Response(serializer.data)
 
@@ -106,7 +106,7 @@ class WishlistAPIView(APIView):
 
     def delete(self, request: Request) -> Response:
         wishlist = self.get_wishlist(request)
-        serializer = WishlistDeteteSerializer(data = request.data)
+        serializer = WishlistDeleteSerializer(data = request.data)
 
         if serializer.is_valid(raise_exception=True):
             wishlist.remove(product_id = serializer.validated_data['product_id'])

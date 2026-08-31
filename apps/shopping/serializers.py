@@ -9,7 +9,7 @@ class CartUpdateSerializer(serializers.Serializer):
     product_id = serializers.IntegerField()
     quantity = serializers.IntegerField(min_value = 1)
 
-class CartDeteteSerializer(serializers.Serializer):
+class CartDeleteSerializer(serializers.Serializer):
     product_id = serializers.IntegerField()
 
 class CartItemSerializer(serializers.Serializer):
@@ -19,16 +19,15 @@ class CartItemSerializer(serializers.Serializer):
     quantity = serializers.IntegerField()
     total_price = serializers.DecimalField(max_digits=10, decimal_places=2)
 
-class CartResponceSerializer(serializers.Serializer):
+class CartResponseSerializer(serializers.Serializer):
     items = CartItemSerializer(many = True)
     total_price = serializers.DecimalField(max_digits=10, decimal_places=2)
     total_quantity = serializers.IntegerField()
 
-
 class WishlistAddSerializer(serializers.Serializer):
     product_id = serializers.IntegerField()
 
-class WishlistDeteteSerializer(serializers.Serializer):
+class WishlistDeleteSerializer(serializers.Serializer):
     product_id = serializers.IntegerField()
 
 class WishlistItemSerializer(serializers.Serializer):
@@ -36,6 +35,6 @@ class WishlistItemSerializer(serializers.Serializer):
     name = serializers.CharField()
     price = serializers.DecimalField(max_digits=10, decimal_places=2)
 
-class WishlistResponceSerializer(serializers.Serializer):
+class WishlistResponseSerializer(serializers.Serializer):
     items = WishlistItemSerializer(many = True)
     total_quantity = serializers.IntegerField()

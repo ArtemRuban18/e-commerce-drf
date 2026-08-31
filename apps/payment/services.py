@@ -1,13 +1,25 @@
 import stripe
 from django.conf import settings
 from .models import Payment
+from typing import Tuple
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
 class PaymentService:
+    """Сервіс для обробки платежів через Stripe."""
+    
     @staticmethod
-    def create_checkout_session(order):
+    def create_checkout_session(order) -> Tuple:
+        """
+        Створити сесію оплати Stripe для замовлення.
+        
+        Args:
+            order: Об'єкт замовлення
+            
+        Returns:
+            Кортеж (session, payment) - сесія Stripe та запис платежу
+        """
         session = stripe.checkout.Session.create(
             payment_method_types=["card"],
             line_items=[
@@ -36,15 +48,15 @@ class PaymentService:
 
             customer_email=order.email,
 
-            success_url=("http://localhost:3000/payment/success"),
+            success_url=settings.STRIPE_SUCCESS_URL,
 
-            cancel_url=( "http://localhost:3000/payment/cancel"),)
+            cancel_url=settings.STRIPE_CANCEL_URL,)
 
         payment = Payment.objects.create(
-            stripe_payment_id=session.id,
             order=order,
             amount=order.total_price,
             email=order.email,
+            status=Payment.Status.PENDING,
         )
 
         return session, payment
