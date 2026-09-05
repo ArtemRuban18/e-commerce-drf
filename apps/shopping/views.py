@@ -77,6 +77,8 @@ class CartAPIView(APIView):
 
 
 class WishlistAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get_wishlist(self, request: Request) -> Response:
         shopping = ShoppingService(
             request.session,

@@ -40,6 +40,7 @@ def get_wishlist_products(wishlist_items: Dict[str, int]) -> Dict:
     for product in products:
         items.append(
             {
+            "id": product.id,
             "name": product.name,
             "price": product.price
             }
@@ -47,5 +48,5 @@ def get_wishlist_products(wishlist_items: Dict[str, int]) -> Dict:
     
     return {
         "items": items,
-        "product_count": products.count()
+        "total_quantity": products.count()
     }

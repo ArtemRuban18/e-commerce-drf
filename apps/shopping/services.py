@@ -55,6 +55,7 @@ class CartService:
     
     def clear(self) -> None:
         self.shopping.clear()
+        self.items = {}
     
     def get_items(self) -> Dict[str, int]:
         return self.items
@@ -82,6 +83,7 @@ class WishlistService:
 
     def clear(self) -> None:
         self.shopping.clear()
+        self.items = {}
 
     def get_items(self) -> Dict[str, int]:
         return self.items
