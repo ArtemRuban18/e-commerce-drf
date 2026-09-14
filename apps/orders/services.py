@@ -8,25 +8,10 @@ from django.contrib.auth.models import User
 
 
 class OrderService:
-    """Сервіс для управління замовленнями."""
     
     @staticmethod
     @transaction.atomic
     def create_order(user: User, cart, data: Dict[str, str]) -> Order:
-        """
-        Створити замовлення з товарів кошика.
-        
-        Args:
-            user: Користувач який замовляє
-            cart: Об'єкт кошика
-            data: Дані замовлення (ім'я, адреса, тощо)
-            
-        Returns:
-            Створене замовлення
-            
-        Raises:
-            ValidationError: Якщо кошик пустий або недостатньо товарів
-        """
         cart_items = cart.get_items()
 
         if not cart_items:
@@ -73,18 +58,6 @@ class OrderService:
     @staticmethod
     @transaction.atomic
     def cancel_order(order: Order) -> Order:
-        """
-        Скасувати замовлення та повернути товари на склад.
-        
-        Args:
-            order: Замовлення для скасування
-            
-        Returns:
-            Скасоване замовлення
-            
-        Raises:
-            ValidationError: Якщо замовлення не в статусі PENDING
-        """
         if order.status != Order.Status.PENDING:
             raise ValidationError("Only pending orders can be canceled")
 
