@@ -26,7 +26,7 @@ class OrderService:
 
         order_items = []
         for product in products:
-            quantity = cart_items[str(product.id)]
+            quantity = int(cart_items[str(product.id)])
 
             if product.quantity < quantity:
                 raise ValidationError(f"Not enough {product.name}")
