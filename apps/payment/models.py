@@ -9,6 +9,7 @@ class Payment(models.Model):
 
 
     order = models.OneToOneField(Order, on_delete=models.CASCADE, related_name='payment')
+    stripe_payment_id = models.CharField(max_length=255, unique=True, null=True, blank=True)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     email = models.EmailField()
     status = models.CharField(max_length=50, choices=Status.choices, default = Status.PENDING)

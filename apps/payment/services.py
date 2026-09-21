@@ -7,19 +7,10 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
 class PaymentService:
-    """Сервіс для обробки платежів через Stripe."""
     
     @staticmethod
     def create_checkout_session(order) -> Tuple:
-        """
-        Створити сесію оплати Stripe для замовлення.
-        
-        Args:
-            order: Об'єкт замовлення
-            
-        Returns:
-            Кортеж (session, payment) - сесія Stripe та запис платежу
-        """
+        total_price = order.total_price()
         session = stripe.checkout.Session.create(
             payment_method_types=["card"],
             line_items=[
@@ -28,7 +19,7 @@ class PaymentService:
                         "currency": "sek",
 
                         "unit_amount": int(
-                            order.total_price * 100
+                            total_price * 100
                         ),
 
                         "product_data": {
@@ -54,7 +45,8 @@ class PaymentService:
 
         payment = Payment.objects.create(
             order=order,
-            amount=order.total_price,
+            stripe_payment_id=session.id,
+            amount=total_price,
             email=order.email,
             status=Payment.Status.PENDING,
         )
