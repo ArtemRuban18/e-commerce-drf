@@ -1,4 +1,4 @@
-FROM python:3.12-alpine AS builder
+FROM python:3.12-slim AS builder
 
 WORKDIR /app
 
@@ -7,15 +7,15 @@ ENV PYTHONUNBUFFERED=1
 
 COPY requirements.txt .
 
-RUN apt-get update & apt-get install -y --no-install-recommends \
-    build-esential \
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
     gcc \ 
     libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
-RUN pip install -r --no-cache-dir requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
-FROM python:3.12-alpine
+FROM python:3.12-slim
 
 WORKDIR /app
 
@@ -33,6 +33,6 @@ USER appuser
 
 EXPOSE 8000
 
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3"]
 
 
